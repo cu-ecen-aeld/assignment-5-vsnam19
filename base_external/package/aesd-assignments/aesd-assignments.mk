@@ -6,17 +6,19 @@
 ##############################################################
 
 #TODO: Fill up the contents below in order to reference your assignment 3 git contents
-AESD_ASSIGNMENTS_VERSION = '9969485e6359387d59572e3f82385e6e7cac4afe'
+AESD_ASSIGNMENTS_VERSION = 75779434b3bfe9a9d3a6cbc289f22b556e2d8c0d
 # Note: Be sure to reference the *ssh* repository URL here (not https) to work properly
 # with ssh keys and the automated build/test system.
 # Your site should start with git@github.com:
-AESD_ASSIGNMENTS_SITE = 'git@github.com:cu-ecen-aeld/assignment-5-vsnam19.git'
+AESD_ASSIGNMENTS_SITE = git@github.com:cu-ecen-aeld/assignments-3-and-later-vsnam19.git
 AESD_ASSIGNMENTS_SITE_METHOD = git
 AESD_ASSIGNMENTS_GIT_SUBMODULES = YES
 
 define AESD_ASSIGNMENTS_BUILD_CMDS
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/finder-app clean all
-	$(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D)/server clean all
+	$(TARGET_MAKE_ENV) $(MAKE) CROSS_COMPILE=$(TARGET_CROSS) CC=$(TARGET_CC) -C $(@D)/finder-app clean
+	$(TARGET_MAKE_ENV) $(MAKE) CROSS_COMPILE=$(TARGET_CROSS) CC=$(TARGET_CC) -C $(@D)/finder-app all
+	$(TARGET_MAKE_ENV) $(MAKE) CROSS_COMPILE=$(TARGET_CROSS) CC=$(TARGET_CC) -C $(@D)/server clean
+	$(TARGET_MAKE_ENV) $(MAKE) CROSS_COMPILE=$(TARGET_CROSS) CC=$(TARGET_CC) -C $(@D)/server all
 endef
 
 # TODO add your writer, finder and finder-test utilities/scripts to the installation steps below

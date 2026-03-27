@@ -1,0 +1,7 @@
+config BR2_PACKAGE_LDD_MODULES
+	bool "ldd-modules"
+	depends on BR2_LINUX_KERNEL
+	help
+	  Builds scull, faulty and hello kernel modules from the LDD3
+	  source tree (assignment-7 submodule) and installs them so
+	  they can be loaded by S98lddmodules at boot.

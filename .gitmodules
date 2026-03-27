@@ -5,3 +5,6 @@
 	path = buildroot
 	url = https://gitlab.com/buildroot.org/buildroot/
 	branch = 2024.02.x
+[submodule "base_external/package/ldd"]
+	path = base_external/package/ldd
+	url = https://github.com/vsnam19/assignment-7-vsnam19.git

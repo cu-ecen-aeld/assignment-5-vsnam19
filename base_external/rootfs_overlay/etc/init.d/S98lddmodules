@@ -1,0 +1,84 @@
+#!/bin/sh
+# Load and unload LDD assignment modules at boot/shutdown.
+
+start() {
+    echo "Loading ldd modules"
+
+    # Load scull and create its device nodes
+    if modprobe scull; then
+        major=$(awk '$2=="scull" {print $1}' /proc/devices)
+        if [ -n "${major}" ]; then
+            rm -f /dev/scull[0-3]
+            mknod /dev/scull0 c "${major}" 0
+            mknod /dev/scull1 c "${major}" 1
+            mknod /dev/scull2 c "${major}" 2
+            mknod /dev/scull3 c "${major}" 3
+            ln -sf scull0 /dev/scull
+            chmod 664 /dev/scull[0-3]
+            rm -f /dev/scullpipe[0-3]
+            mknod /dev/scullpipe0 c "${major}" 4
+            mknod /dev/scullpipe1 c "${major}" 5
+            mknod /dev/scullpipe2 c "${major}" 6
+            mknod /dev/scullpipe3 c "${major}" 7
+            ln -sf scullpipe0 /dev/scullpipe
+            chmod 664 /dev/scullpipe[0-3]
+            rm -f /dev/scullsingle
+            mknod /dev/scullsingle c "${major}" 8
+            chmod 664 /dev/scullsingle
+            rm -f /dev/sculluid
+            mknod /dev/sculluid c "${major}" 9
+            chmod 664 /dev/sculluid
+            rm -f /dev/scullwuid
+            mknod /dev/scullwuid c "${major}" 10
+            chmod 664 /dev/scullwuid
+            rm -f /dev/scullpriv
+            mknod /dev/scullpriv c "${major}" 11
+            chmod 664 /dev/scullpriv
+        fi
+    fi
+
+    # Load faulty and create its device node
+    if modprobe faulty; then
+        major=$(awk '$2=="faulty" {print $1}' /proc/devices)
+        if [ -n "${major}" ]; then
+            rm -f /dev/faulty
+            mknod /dev/faulty c "${major}" 0
+            chmod 664 /dev/faulty
+        fi
+    fi
+    
+    # Load hello
+    modprobe hello  2>/dev/null || true
+}
+
+stop() {
+    echo "Unloading ldd modules"
+
+    rmmod hello  2>/dev/null || true
+    rmmod faulty 2>/dev/null || true
+    rmmod scull  2>/dev/null || true
+
+    rm -f /dev/scull /dev/scull[0-3]
+    rm -f /dev/scullpipe /dev/scullpipe[0-3]
+    rm -f /dev/scullsingle /dev/sculluid /dev/scullwuid /dev/scullpriv
+    rm -f /dev/faulty
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart|reload)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|reload}"
+        exit 1
+        ;;
+esac
+
+exit 0
